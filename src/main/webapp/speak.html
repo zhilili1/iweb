@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <script>
+        $.get(
+            '/dom/speak?method=listSpeak',
+            function (data) {
+                var table = $('#tb3');
+                data.forEach(function (data) {
+                    var newRow='<tr><td >' +data.contain+
+                        '</td></tr>';
+                    table.append(newRow);
+                })
+            },'json'
+        )
+        $(function () {
+            $('#addspeak').click(function () {
+                let val=$('#contain').val();
+                $.get(
+                    '/dom/speak?method=add',
+                    {"contain":val},
+                    function (result) {
+                        if (result.isOk)
+                        {
+                            alert(result.mess);
+                            location.reload();
+                        }
+                        else {
+                            alert(result.mess);
+                        }
+                    },'json'
+                )
+            })
+            $('#selectuid').click(function () {
+                $.get(
+                    '/dom/speak?method=select',
+                    function (data) {
+                        var table = $('#tb3');
+                        $("#tb3 tr:gt(0)").remove();
+                        data.forEach(function (data) {
+                            var newRow='<tr><td >' +data.contain+
+                                '</td>' +
+                                '<td><button value="'+data.spid+
+                                '" class="delete">删除</button></td></tr>';
+                            table.append(newRow);
+                        })
+
+                    },'json'
+                )
+            });
+            $('#tb3').on('click', '.delete', function() {
+                var value = $(this).attr("value");
+                $.get(
+                    '/dom/speak?method=delete',
+                    {"spid":value},
+                    function(result) {
+                        if (result.isOk) {
+                            alert(result.mess);
+                            location.reload();
+                        } else {
+                            alert(result.mess);
+                        }
+                    }, 'json'
+                )
+            });
+            $('#sx').click(function () {
+                location.reload();
+            })
+        })
+    </script>
+</head>
+<body>
+<h1>这里是评论表</h1>
+<input type="text" id="contain">
+<button id="addspeak">添加评论</button>
+<button id="selectuid">查看我的评论</button>
+<button id="sx">刷新</button>
+<table id="tb3">
+    <tr>
+        <th>评论</th>
+        <th>删除评论</th>
+    </tr>
+</table>
+</body>
+</html>

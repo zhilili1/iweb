@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <script>
+        $.get(
+            '/dom/sc?method=listLove',
+            function (data) {
+                var table = $('#tb2');
+                data.forEach(function (data) {
+                    var newRow='<tr><td >' +data.mid+
+                        '</td><td>' +data.name+
+                        '</td><td>' +data.author+
+                        '</td>' +
+                        '<td>' +'<audio controls="controls" src="' +data.src+
+                        '"></audio>'+
+                         '</td><td><button value="' +data.mid+
+                         '" class="dis">取消收藏</button></td></tr>';
+                    table.append(newRow);
+                })
+            },'json'
+        )
+        $(function () {
+            $('#tb2').on('click', '.dis', function() {
+                var value = $(this).attr("value");
+                $.get(
+                    '/dom/sc?method=delete',
+                    {"mid": value},
+                    function(result) {
+                        if (result.isOk) {
+                            alert(result.mess);
+                            location.reload();
+                        } else {
+                            alert(result.mess);
+                        }
+                    },'json'
+                )
+            });
+        })
+    </script>
+</head>
+<body>
+<h1>这里是收藏列表</h1>
+
+<table id="tb2">
+    <tr>
+        <th>mid</th>
+        <th>歌曲名</th>
+        <th>作者</th>
+        <th>播放</th>
+        <th>取消收藏</th>
+    </tr>
+</table>
+</body>
+</html>

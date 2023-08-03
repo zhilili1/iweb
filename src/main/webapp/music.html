@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <script>
+        $.get('/dom/music?method=list',
+            function (data) {
+                var table = $('#tb1');
+                data.forEach(function (data) {
+                    var newRow='<tr><td >' +data.mid+
+                        '</td><td>' +data.name+
+                        '</td><td>' +data.author+
+                        '</td>' +
+                        '<td>' +'<audio controls="controls" src="' +data.src+
+                        '"></audio>'+
+                        '</td><td><button value="' +data.mid+
+                        '" class="delete">删除</button></td>' +
+                        '<td><button value="' +data.mid+
+                        '" class="love">收藏</button></td>' +
+                        '<td><button value="' +data.mid+
+                        '"class="speak">查看评论</button></td></tr>';
+                    table.append(newRow);
+                })
+        },'json');
+
+      $(function () {
+          $('#btns').click(function () {
+              var name = $('#select').val();
+              $.post(
+                  '/dom/music',
+                  {"name":name,"method":"musicAuthor"},
+                  function (data) {
+                      var table = $('#tb1');
+                      data.forEach(function (data) {
+                          $("#tb1 tr:gt(0)").remove();
+                              var newRow = '<tr><td >' + data.mid +
+                                  '</td><td>' + data.name +
+                                  '</td><td>' + data.author +
+                                  '</td>' +
+                                  '<td>' + '<audio controls="controls" src="' +data.src+
+                                  '"></audio></td>' +
+                                  '<td><button value="'+data.mid+
+                                  '" class="delete">删除</button></td></tr>';
+                              table.append(newRow);
+                          }
+                      )
+                  },'json')
+          });
+              $('#tb1').on('click', '.delete', function() {
+
+                  var value = $(this).attr("value");
+                  $.get(
+                      '/dom/music?method=delete',
+                      {"mid": value},
+                      function(result) {
+                          if (result.isOk) {
+                              alert(result.mess);
+                              location.reload();
+                          } else {
+                              alert(result.mess);
+                          }
+                      }, 'json'
+                  )
+              });
+              $('#tb1').on('click','.love',function () {
+                  var value=$(this).attr("value");
+                  $.get(
+                      '/dom/sc?method=addlove',
+                  {"mid":value},
+                      function (result) {
+                          if (result.isOk)
+                          {
+                              alert(result.mess);
+                          }else
+                          {
+                              alert(result.mess)
+                          }
+
+                      },'json'
+                  )
+
+              });
+              $('#tb1').on('click','.speak',function () {
+                  var value=$(this).attr("value");
+                  $.get(
+                      '/dom/speak?method=save',
+                      {"mid":value},
+                      function (result) {
+                          if (result.isOk)
+                          {
+                              alert(result.mess);
+                              window.location="http://localhost:8080/dom/speak.html"
+                          }
+                      },'json'
+                  )
+              });
+
+          $('#btna').click(function () {
+              window.location="http://localhost:8080/dom/addmusic.html";
+          });
+              $('#selectsc').click(function () {
+                  alert("即将跳转到收藏界面")
+                  window.location="http://localhost:8080/dom/sc.html"
+              });
+
+      }
+      )
+
+
+
+    </script>
+</head>
+<body>
+<div>
+    内容：<input type="text" id="select">
+    <button id="btns">搜索</button><br>
+    <button id ="btna">添加歌曲</button><br>
+    <button id ="selectsc">查看收藏</button>
+
+
+</div>
+<table id="tb1">
+<tr>
+    <th>mid</th>
+    <th>歌曲名</th>
+    <th>作者</th>
+    <th>播放</th>
+    <th>操作</th>
+    <th>收藏</th>
+    <th>查看评论</th>
+</tr>
+</table>
+</body>
+</html>

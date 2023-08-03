@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+</head>
+<body>
+欢迎你，尊贵的用户<div id="username"></div><br>
+<button id="btn1">点击查看音乐列表</button><br>
+<button id="btn2">点击查看你的收藏歌单</button><br>
+
+</body>
+<script>
+$.get('/dom/user?method=getInfo',function (data) {
+$('#username').html(data.t.username);
+},'json');
+$('#btn1').click(function () {
+    alert("即将跳转到音乐界面")
+    window.location="http://localhost:8080/dom/music.html"
+})
+$('#btn2').click(function () {
+    alert("即将跳转到收藏界面")
+    window.location="http://localhost:8080/dom/sc.html"
+})
+</script>
+</html>
